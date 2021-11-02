@@ -103,7 +103,7 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
   console.log("5m Buy Signals:", recommendation.BUY, "|", "5m Sell Signals:", recommendation.SELL)
   console.log("1m Buy Signals:", minrecommendation.BUY, "|", "1m Sell Signals:", minrecommendation.SELL)
   
-  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 8) {12
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 12) {
     console.log(green("\nBetting on Bull Bet."));
   } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -12) {
     console.log(green("\nBetting on Bear Bet."));
