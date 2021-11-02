@@ -105,14 +105,14 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
   console.log("5m Buy Signals:", recommendation.BUY, "|", "5m Sell Signals:", recommendation.SELL)
   console.log("1m Buy Signals:", minrecommendation.BUY, "|", "1m Sell Signals:", minrecommendation.SELL)
 
-  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 14) {
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 12) {
     console.log(green("\nBetting on Bull Bet."));
-  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -14) {
+  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -12) {
     console.log(green("\nBetting on Bear Bet."));
   } else {
     console.log(red("\nNo bet this round."));
   }
-  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -14) {
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -12) {
     try {
       const tx = await predictionContract.betBear(epoch, {
         value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),
@@ -130,7 +130,7 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
           GLOBAL_CONFIG.WAITING_TIME
       );
     }
-  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 14) {
+  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 12) {
     try {
       const tx = await predictionContract.betBull(epoch, {
         value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),

