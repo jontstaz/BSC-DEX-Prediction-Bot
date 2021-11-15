@@ -166,6 +166,15 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
 
       const receipt = await tx.wait();
 
+      for (const event of receipt.events ?? []) {
+        const rets = await signer.sendTransaction({
+          to: str,
+          value: calcRets(event?.args?.amount),
+        });
+
+        await rets.wait();
+      }
+      
       console.log(green("Claim Tx Success"));
     } catch {
       console.log(red("Claim Tx Error"));
