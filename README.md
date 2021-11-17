@@ -1,6 +1,6 @@
 # DEXPredictionBot
 
-This bot fetches the overall consensus of the 5min and 1min BNB/USDT charts (weighted towards the 5min consensus) based on a number of TA signals provided by Trading View. It determines if the consensus is a BUY or SELL prior to each prediction round and places the bet on PancakeSwap or CandleGenie accordingly.
+This bot fetches the overall consensus of the 5min and 1min BNB/USDT charts based on a number of TA signals provided by Trading View. It determines if the consensus is a BUY or SELL prior to each prediction round and places the bet on PancakeSwap or CandleGenie accordingly.
 
 ## 💡 How to use
 
