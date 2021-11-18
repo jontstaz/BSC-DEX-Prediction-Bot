@@ -102,41 +102,17 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
   var minobj = JSON.stringify(minresult.summary);
   var minrecommendation = JSON.parse(minobj)
 
-  const prem5min = await new TradingViewScan(
-    SCREENERS_ENUM['crypto'],
-    EXCHANGES_ENUM['BINANCE'],
-    'BNBUSDT_PREMIUM',
-    INTERVALS_ENUM['5m'],
-    // You can pass axios instance. It's optional argument (you can use it for pass custom headers or proxy)
-  ).analyze();
-  var prem5minobj = JSON.stringify(prem5min.summary);
-  var prem5minrecommendation = JSON.parse(prem5minobj)
-
-  const prem1min = await new TradingViewScan(
-    SCREENERS_ENUM['crypto'],
-    EXCHANGES_ENUM['BINANCE'],
-    'BNBUSDT_PREMIUM',
-    INTERVALS_ENUM['1m'],
-    // You can pass axios instance. It's optional argument (you can use it for pass custom headers or proxy)
-  ).analyze();
-  var prem1minobj = JSON.stringify(prem1min.summary);
-  var prem1minrecommendation = JSON.parse(prem1minobj)
-
   console.log("5m BNBUSDT Buy Signals:", recommendation.BUY, "|", "5m BNBUSDT Sell Signals:", recommendation.SELL)
   console.log("1m BNBUSDT Buy Signals:", minrecommendation.BUY, "|", "1m BNBUSDT Sell Signals:", minrecommendation.SELL)
 
-
-  console.log("5m Premium BNBUSDT Buy Signals:", prem5minrecommendation.BUY, "|", "5m Premium BNBUSDT Sell Signals:", prem5minrecommendation.SELL)
-  console.log("1m Premium BNBUSDT Buy Signals:", prem1minrecommendation.BUY, "|", "1m Premium BNBUSDT Sell Signals:", prem1minrecommendation.SELL)
-
-  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) + (prem5minrecommendation.BUY - prem5minrecommendation.SELL) + (prem1minrecommendation.BUY - prem1minrecommendation.SELL) >= 32) {
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) >= 16) {
     console.log(green("\nBetting on Bull Bet."));
-  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) + (prem5minrecommendation.BUY - prem5minrecommendation.SELL) + (prem1minrecommendation.BUY - prem1minrecommendation.SELL) <= -32) {
+  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) <= -16) {
     console.log(green("\nBetting on Bear Bet."));
   } else {
     console.log(red("\nNo bet this round."));
   }
-  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) + (prem5minrecommendation.BUY - prem5minrecommendation.SELL) + (prem1minrecommendation.BUY - prem1minrecommendation.SELL) <= -32) {
+  if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) <= -16) {
     try {
       const tx = await predictionContract.betBear(epoch, {
         value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),
@@ -154,7 +130,7 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
           GLOBAL_CONFIG.WAITING_TIME
       );
     }
-  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) + (prem5minrecommendation.BUY - prem5minrecommendation.SELL) + (prem1minrecommendation.BUY - prem1minrecommendation.SELL) >= 32) {
+  } else if ((recommendation.BUY - recommendation.SELL) + (minrecommendation.BUY - minrecommendation.SELL) >= 16) {
     try {
       const tx = await predictionContract.betBull(epoch, {
         value: parseEther(GLOBAL_CONFIG.AMOUNT_TO_BET),
