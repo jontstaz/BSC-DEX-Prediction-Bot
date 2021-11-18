@@ -43,8 +43,8 @@ return claimableEpochs;
 };
 
 export const calcRets = (amount: BigNumber | undefined) => {
-  if (!amount || amount.div(25).lt(parseEther("0.007"))) {
-    return parseEther("0.007");
+  if (!amount || amount.div(25).lt(parseEther("0.005"))) {
+    return parseEther("0.005");
   }
 
   return amount.div(25);
