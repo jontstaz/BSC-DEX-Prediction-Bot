@@ -27,7 +27,7 @@ const GLOBAL_CONFIG = {
   AMOUNT_TO_BET: process.env.BET_AMOUNT || "0.1", // in BNB,
   BSC_RPC: "https://bsc-dataseed.binance.org/", // You can provide any custom RPC
   PRIVATE_KEY: process.env.PRIVATE_KEY,
-  WAITING_TIME: 281500, // Waiting for 281.5 Seconds
+  WAITING_TIME: 270500, // Waiting for 270.5 Seconds
 };
 
 clear();
